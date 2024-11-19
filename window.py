@@ -6,8 +6,8 @@ class Window:
         self.root = Tk()
         self.root.geometry = f"{width}x{height}"  # pyright: ignore
         self.root.title = "Maze Solver"  # pyright: ignore
-        self.canvas = Canvas(self.root)
-        self.canvas.pack()
+        self.canvas = Canvas(self.root, bg="white", height=height, width=width)
+        self.canvas.pack(fill=BOTH, expand=1)
         self.running = False
         self.root.protocol("WM_DELETE_WINDOW", self.close)
 
