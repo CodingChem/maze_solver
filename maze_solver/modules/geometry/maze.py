@@ -32,8 +32,51 @@ class Maze:
         self._cells = []
         self._create_cells()
         self._break_entrance_and_exit()
+        self._break_walls_r(1, 1)
+        self._reset_cells_visited()
         self._draw_cells()
         self._animate()
+        self.solve()
+
+    def solve(self):
+        self._solve_r(0, 0)
+
+    def _solve_r(self, i, j):
+        self._animate()
+        self._cells[i][j].visited = True
+        current_cell = self._cells[i][j]
+        if current_cell == self._cells[-1][-1]:
+            return True
+        for cell in self._get_valid_paths(i, j):
+            current_cell.draw_move(cell)
+            match self._solve_r(*self._get_cell_coordinates(cell)):
+                case True:
+                    return True
+                case False:
+                    current_cell.draw_move(cell, True)
+        return False
+
+    def _get_valid_paths(self, i: int, j: int) -> list[Cell]:
+        paths = []
+        current_cell = self._cells[i][j]
+        for cell in self._get_adjecant_cells(i, j):
+            # case: target is to the LEFT
+            if current_cell.walls[WallType.LEFT] == cell.walls[WallType.RIGHT]:
+                if not (current_cell.has_left_wall or cell.has_right_wall):
+                    paths.append(cell)
+            # case: target is to the RIGHT
+            if current_cell.walls[WallType.RIGHT] == cell.walls[WallType.LEFT]:
+                if not (current_cell.has_right_wall or cell.has_left_wall):
+                    paths.append(cell)
+            # case: target is on the TOP
+            if current_cell.walls[WallType.TOP] == cell.walls[WallType.BOTTOM]:
+                if not (current_cell.has_top_wall or cell.has_bottom_wall):
+                    paths.append(cell)
+            # case: target is on the BOTTOM
+            if current_cell.walls[WallType.BOTTOM] == cell.walls[WallType.TOP]:
+                if not (current_cell.has_bottom_wall or cell.has_top_wall):
+                    paths.append(cell)
+        return [x for x in paths if not x.visited]
 
     def _create_cells(self):
         for height_index in range(self.num_rows):
