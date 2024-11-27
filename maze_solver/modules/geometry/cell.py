@@ -1,5 +1,4 @@
 from __future__ import annotations
-from .line import Line
 from .point import Point
 from .window import Window
 from .cell_wall import CellWall, WallType
@@ -21,6 +20,28 @@ class Cell:
         self.set_walls(has_left_wall, has_right_wall, has_top_wall, has_bottom_wall)
         self._win = win
         self.visited = False
+
+    def break_walls(self, target: Cell) -> None:
+        # case: target is to the LEFT
+        if self.walls[WallType.LEFT] == target.walls[WallType.RIGHT]:
+            self.has_left_wall = False
+            target.has_right_wall = False
+            return
+        # case: target is to the RIGHT
+        if self.walls[WallType.RIGHT] == target.walls[WallType.LEFT]:
+            self.has_right_wall = False
+            target.has_left_wall = False
+            return
+        # case: target is on the TOP
+        if self.walls[WallType.TOP] == target.walls[WallType.BOTTOM]:
+            self.has_top_wall = False
+            target.has_bottom_wall = False
+            return
+        # case: target is on the BOTTOM
+        if self.walls[WallType.BOTTOM] == target.walls[WallType.TOP]:
+            self.has_bottom_wall = False
+            target.has_top_wall = False
+            return
 
     def draw(self) -> None:
         for wall in self.get_walls():

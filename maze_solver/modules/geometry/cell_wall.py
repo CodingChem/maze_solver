@@ -23,3 +23,8 @@ class CellWall(Line):
 
     def iswall(self):
         return self.exists
+
+    def __eq__(self, value: object, /) -> bool:
+        if not isinstance(value, CellWall):
+            return False
+        return super().__eq__(value)
